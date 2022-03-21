@@ -1,6 +1,8 @@
+#!/usr/bin/env Rscript
 cd ~/KPMS-IT4I-EX
 pwd
 
+module purge
 module load R
 echo "loaded R"
 
