@@ -6,5 +6,8 @@ module purge
 module load R
 echo "loaded R"
 
+install.package("randomForest")
+install.package("parallel")
+
 
 time Rscript EX4.r 4
