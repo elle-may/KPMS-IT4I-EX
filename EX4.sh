@@ -13,4 +13,4 @@ module load R
 echo "loaded R"
 
 
-time Rscript EX4.r 4
+time Rscript EX4.R 4
