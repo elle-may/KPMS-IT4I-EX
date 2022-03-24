@@ -37,7 +37,7 @@ rf = function(x) randomForest(lettr ~ ., train, ntree=x, norm.votes = FALSE)
 rf.out = parallel::mclapply(ntree, rf, mc.cores = nc)
 rf.all = do.call(combine, rf.out)
 
-crows = splitIndices(nrow(test), nc) 
+crows = parallel::splitIndices(nrow(test), nc) 
 rfp = function(x) as.vector(predict(rf.all, test[x, ])) 
 cpred = mclapply(crows, rfp, mc.cores = nc) 
 pred = do.call(c, cpred) 
