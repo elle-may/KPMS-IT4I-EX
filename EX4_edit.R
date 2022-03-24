@@ -34,7 +34,7 @@ pdf(paste0("rf_cv", nc, ".pdf")); plot(mtry_val, err/(n - n_test)); dev.off()
 
 system.time({
 rf = function(x) randomForest(lettr ~ ., train, ntree=x, norm.votes = FALSE)
-rf.out = mclapply(ntree, rf, mc.cores = nc)
+rf.out = parallel::mclapply(ntree, rf, mc.cores = nc)
 rf.all = do.call(combine, rf.out)
 })
 
