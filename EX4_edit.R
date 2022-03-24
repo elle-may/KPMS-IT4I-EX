@@ -43,11 +43,22 @@ cpred = parallel::mclapply(crows, rfp, mc.cores = nc)
 pred = do.call(c, cpred) 
 
 correct <- sum(pred == test$lettr)
-})
 
 mtry = mtry_val[which.min(err)]
-rf.all = randomForest(lettr ~ ., train, ntree = ntree, mtry = mtry)
-pred_cv = predict(rf.all, test)
-correct_cv = sum(pred_cv == test$lettr)
+
+rf2 = function(x) randomForest(lettr ~ ., train, ntree=x, mtry = mtry, norm.votes = FALSE)
+rf.out2 = parallel::mclapply(ntree, rf2, mc.cores = nc)
+rf.all2 = do.call(combine, rf.out2)
+
+rfp2 = function(x) as.vector(predict(rf.all2, test[x, ])) 
+cpred2 = parallel::mclapply(crows, rfp2, mc.cores = nc) 
+pred2 = do.call(c, cpred2) 
+
+
+pred_cv2 = predict(rf.all2, test)
+correct_cv = sum(pred_cv2 == test$lettr)
+})
+
+
 cat("Proportion Correct: ", correct/n_test, "(mtry = ", floor((ncol(test) - 1)/3),
     ") with cv:", correct_cv/n_test, "(mtry = ", mtry, ")\n", sep = "")
