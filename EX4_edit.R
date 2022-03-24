@@ -39,7 +39,7 @@ rf.all = do.call(combine, rf.out)
 
 crows = parallel::splitIndices(nrow(test), nc) 
 rfp = function(x) as.vector(predict(rf.all, test[x, ])) 
-cpred = mclapply(crows, rfp, mc.cores = nc) 
+cpred = parallel::mclapply(crows, rfp, mc.cores = nc) 
 pred = do.call(c, cpred) 
 
 correct <- sum(pred == test$lettr)
