@@ -53,6 +53,7 @@ predict_svdmod = function(test, models) {
   pred
 }
 
+"""
 #' image_ggplot
 #' 
 #' Produces a facet plot of first few basis vectors as images
@@ -71,7 +72,7 @@ image_ggplot = function(images, ivals, title) {
       ggtitle(title)
   )
 }
-
+"""
 #' model_report
 #' 
 #' reports a summary for each label model of basis vectors
@@ -82,7 +83,7 @@ model_report = function(models, kplot = 0) {
     mk = min(kplot, models[[m]]$k)
     cat("Model", m, ": size ", models[[m]]$k, " var captured ", 
         models[[m]]$pct, " %\n", sep = "") 
-    if(kplot) image_ggplot(models[[m]]$vt, 1:mk, paste("Digit", m))
+    #if(kplot) image_ggplot(models[[m]]$vt, 1:mk, paste("Digit", m))
   }
 }
 
@@ -98,7 +99,7 @@ setthreads(blas_threads)
 ## Begin CV (This CV is with mclapply. Exercise 8 needs MPI parallelization.)
 ## set up cv parameters
 nfolds = 10
-pars = seq(80.0, 95, .2)      ## par values to fit
+pars = seq(85.0, 95, .2)      ## par values to fit
 folds = sample( rep_len(1:nfolds, nrow(train)), nrow(train) ) ## random folds
 cv = expand.grid(par = pars, fold = 1:nfolds)  ## all combinations
 
