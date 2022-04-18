@@ -1,6 +1,6 @@
-#dir = "/scratch/project/dd-21-42/data/mnist/"
+dir = "/scratch/project/dd-21-42/data/mnist/"
 ## Data from:
-## https://www.kaggle.com/benedictwilkinsai/mnist-hd5f0
+## https://www.kaggle.com/benedictwilkinsai/mnist-hd5f
 ## There is also a csv version
 ## https://www.kaggle.com/oddrationale/mnist-in-csv
 ## Requires kaggle log on
