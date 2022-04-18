@@ -88,7 +88,7 @@ model_report = function(models, kplot = 0) {
 
 library(parallel)
 library(ggplot2)
-source("\\KPMS-IT4I-EX\\mnist\\mnist_read.R")
+source("../mnist/mnist_read.R")
 source("..\\KPMS-IT4I-EX\\code\\flexiblas_setup.r")
 blas_threads = as.numeric(commandArgs(TRUE)[2])
 fork_cores = as.numeric(commandArgs(TRUE)[3])
