@@ -121,7 +121,7 @@ fold_err = function(i, cv, folds, train) {
 
 ## apply fold_err() over parameter combinations
 cv_err = mclapply(1:nrow(cv), fold_err, cv = cv, folds = folds, train = train,
-                  mc.cores = fork_cores)
+                  mc.cores = 4)
 
 ## sum fold errors for each parameter value
 cv_err_par = tapply(unlist(cv_err), cv[, "par"], sum)
