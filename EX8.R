@@ -1,13 +1,14 @@
 library(parallel)
 library(ggplot2)
 library(pbdMPI)
+library(pbdIO)
 source("../KPMS-IT4I-EX/mnist/mnist_read.R")
 source("../KPMS-IT4I-EX/code/flexiblas_setup.r")
+comm.set.seed(seed = 123, diff = TRUE)
 
-blas_threads = as.numeric(commandArgs(TRUE)[2])
-fork_cores = as.numeric(commandArgs(TRUE)[4])
 setback("OPENBLAS")
 setthreads(blas_threads)
+
 
 #' svdmod
 #' 
@@ -102,8 +103,10 @@ model_report = function(models, kplot = 0) {
 init()
 
 nfolds = 10
+
+n_test <- nrow(test)
 gt <- gather(nfolds)
-pars = seq(85.0, 95, .2)      ## par values to fit
+pars = seq(80.0, 95, .2)      ## par values to fit
 folds = sample( rep_len(1:nfolds, nrow(train)), nrow(train) ) ## random folds
 cv = expand.grid(par = pars, fold = 1:nfolds)  ## all combinations
 
@@ -137,8 +140,8 @@ pdf("BasisImages.pdf")
 model_report(models, kplot = 9)
 dev.off()
 predicts = predict_svdmod(test, models)
-correct <- sum(predicts == test_lab)
-cat("Proportion Correct:", correct/nrow(test), "\n")
+correct <- reduce(sum(predicts == test_lab))
+comm.cat("Proportion Correct:", correct/n_test, "\n")
 finalize()
 
 
