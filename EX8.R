@@ -1,3 +1,13 @@
+library(parallel)
+library(ggplot2)
+library(pbdMPI)
+source("../KPMS-IT4I-EX/mnist/mnist_read.R")
+source("../KPMS-IT4I-EX/code/flexiblas_setup.r")
+blas_threads = as.numeric(commandArgs(TRUE)[2])
+fork_cores = as.numeric(commandArgs(TRUE)[3])
+setback("OPENBLAS")
+setthreads(blas_threads)
+
 
 #' svdmod
 #' 
@@ -87,18 +97,12 @@ model_report = function(models, kplot = 0) {
   }
 }
 
-library(parallel)
-library(ggplot2)
-source("../KPMS-IT4I-EX/mnist/mnist_read.R")
-source("../KPMS-IT4I-EX/code/flexiblas_setup.r")
-blas_threads = as.numeric(commandArgs(TRUE)[2])
-fork_cores = as.numeric(commandArgs(TRUE)[3])
-setback("OPENBLAS")
-setthreads(blas_threads)
-
 ## Begin CV (This CV is with mclapply. Exercise 8 needs MPI parallelization.)
 ## set up cv parameters
+init()
+
 nfolds = 10
+gt <- gather(nfolds)
 pars = seq(85.0, 95, .2)      ## par values to fit
 folds = sample( rep_len(1:nfolds, nrow(train)), nrow(train) ) ## random folds
 cv = expand.grid(par = pars, fold = 1:nfolds)  ## all combinations
@@ -135,3 +139,4 @@ dev.off()
 predicts = predict_svdmod(test, models)
 correct <- sum(predicts == test_lab)
 cat("Proportion Correct:", correct/nrow(test), "\n")
+finalize()
