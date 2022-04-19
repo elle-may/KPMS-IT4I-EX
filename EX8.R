@@ -53,7 +53,7 @@ predict_svdmod = function(test, models) {
   pred
 }
 
-"""
+
 #' image_ggplot
 #' 
 #' Produces a facet plot of first few basis vectors as images
@@ -72,7 +72,7 @@ image_ggplot = function(images, ivals, title) {
       ggtitle(title)
   )
 }
-"""
+
 #' model_report
 #' 
 #' reports a summary for each label model of basis vectors
