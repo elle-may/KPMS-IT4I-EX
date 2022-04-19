@@ -12,4 +12,4 @@ module load R
 echo "loaded R"
 
 ## --args blas fork
-time mpirun -np 1 Rscript EX8.R
+time mpirun -np 1 Rscript EX8.R --args 4
