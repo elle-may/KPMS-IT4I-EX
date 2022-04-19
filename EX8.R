@@ -110,7 +110,7 @@ nfolds = 10
 
 n_test <- nrow(test)
 gt <- gather(nfolds)
-pars = seq(80.0, 95, .2)      ## par values to fit
+pars = seq(85.0, 95, .2)      ## par values to fit
 folds = sample( rep_len(1:nfolds, nrow(train)), nrow(train) ) ## random folds
 cv = expand.grid(par = pars, fold = 1:nfolds)  ## all combinations
 
@@ -125,7 +125,7 @@ fold_err = function(i, cv, folds, train) {
 
 ## apply fold_err() over parameter combinations
 cv_err = mclapply(1:nrow(cv), fold_err, cv = cv, folds = folds, train = train,
-                  mc.cores = 4)
+                  mc.cores = cores_on_my_node)
 
 ## sum fold errors for each parameter value
 cv_err_par = tapply(unlist(cv_err), cv[, "par"], sum)
