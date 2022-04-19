@@ -11,5 +11,7 @@ pwd
 module load R
 echo "loaded R"
 
+module swap libfabric/1.12.1-GCCcore-10.3.0 libfabric/1.13.2-GCCcore-11.2.0 
+
 ## --args blas fork
-time mpirun -np 1 Rscript EX8.R --args 4
+time mpirun --map-by ppr:64:node Rscript EX8.R
