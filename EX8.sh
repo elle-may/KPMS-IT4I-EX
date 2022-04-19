@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -N mnist_svd_cv
-#PBS -l select=1:ncpus=128,walltime=00:50:00
+#PBS -l select=4:mpiprocs=8
 #PBS -q qexp
 #PBS -e EX8.e
 #PBS -o EX8.o
