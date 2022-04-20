@@ -103,8 +103,9 @@ setthreads(blas_threads)
 nfolds = 10
 pars = seq(80.0, 95, .2)## par values to fit
 my_test_rows = comm.chunk(nrow(test), form = "vector")
+my_train_rows = comm.chunk(nrow(train), form = "vector")
 
-folds = sample( rep_len(1:nfolds, nrow(train)), nrow(train) ) ## random folds
+folds = sample( rep_len(1:nfolds, nrow(my_train_rows)), nrow(my_train_rows) ) ## random folds
 cv = expand.grid(par = pars, fold = 1:nfolds)  ## all combinations
 
 ## function for parameter combination i
@@ -117,7 +118,7 @@ fold_err = function(i, cv, folds, train) {
 }
 
 ## apply fold_err() over parameter combinations
-cv_err = mclapply(1:nrow(cv), fold_err, cv = cv, folds = folds, train = train,
+cv_err = mclapply(1:nrow(cv), fold_err, cv = cv, folds = folds, train = my_train_rows,
                   mc.cores = fork_cores)
 
 ## sum fold errors for each parameter value
@@ -125,7 +126,7 @@ cv_err_par = tapply(unlist(cv_err), cv[, "par"], sum)
 
 
 ## recompute with optimal pct
-models = svdmod(train, train_lab, pct = 85)
+models = svdmod(my_train_rows, train_lab, pct = 85)
 pdf("BasisImages.pdf")
 model_report(models, kplot = 9)
 dev.off()
