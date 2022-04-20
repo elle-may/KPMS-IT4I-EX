@@ -98,9 +98,11 @@ setthreads(blas_threads)
 
 ## Begin CV (This CV is with mclapply. Exercise 8 needs MPI parallelization.)
 ## set up cv parameters
-init()
+
 nfolds = 10
-pars = seq(80.0, 95, .2)      ## par values to fit
+pars = seq(80.0, 95, .2)## par values to fit
+my_test_rows = comm.chunk(nrow(test), form = "vector")
+
 folds = sample( rep_len(1:nfolds, nrow(train)), nrow(train) ) ## random folds
 cv = expand.grid(par = pars, fold = 1:nfolds)  ## all combinations
 
@@ -120,20 +122,14 @@ cv_err = mclapply(1:nrow(cv), fold_err, cv = cv, folds = folds, train = train,
 ## sum fold errors for each parameter value
 cv_err_par = tapply(unlist(cv_err), cv[, "par"], sum)
 
-## plot cv curve with loess smoothing (ggplot default)
-pdf("Crossvalidation.pdf")
-ggplot(data.frame(pct = pars, error = cv_err_par/nrow(train)), 
-       aes(pct, error)) + geom_point() + geom_smooth() +
-  labs(title = "Loess smooth with 95% CI of crossvalidation")
-dev.off()
-## End CV
 
 ## recompute with optimal pct
 models = svdmod(train, train_lab, pct = 85)
 pdf("BasisImages.pdf")
 model_report(models, kplot = 9)
 dev.off()
-predicts = predict_svdmod(test, models)
-correct <- sum(predicts == test_lab)
-cat("Proportion Correct:", correct/nrow(test), "\n")
+predicts = predict_svdmod(my_test_rows, models)
+correct = reduce(sum(my_pred == test_lab[my_test_rows]))
+#correct <- sum(predicts == test_lab)
+cat("Proportion Correct:", correct/nrow(my_test_rows), "\n")
 finalize()
