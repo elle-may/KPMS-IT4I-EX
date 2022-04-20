@@ -1,19 +1,3 @@
-library(parallel)
-library(ggplot2)
-library(pbdMPI)
-library(pbdIO)
-source("../KPMS-IT4I-EX/mnist/mnist_read.R")
-source("../KPMS-IT4I-EX/code/flexiblas_setup.r")
-comm.set.seed(seed = 123, diff = TRUE)
-cores_on_my_node = detectCores()
-#cores_per_R = floor(cores_on_my_node/ranks_on_my_node)
-#cores_total = allreduce(cores_per_R)
-my_rank = comm.rank()
-ranks = comm.size()
-setback("OPENBLAS")
-setthreads(cores_on_my_node)
-
-
 #' svdmod
 #' 
 #' Computes SVD for each image label in training data
@@ -68,7 +52,6 @@ predict_svdmod = function(test, models) {
   pred
 }
 
-
 #' image_ggplot
 #' 
 #' Produces a facet plot of first few basis vectors as images
@@ -98,19 +81,25 @@ model_report = function(models, kplot = 0) {
     mk = min(kplot, models[[m]]$k)
     cat("Model", m, ": size ", models[[m]]$k, " var captured ", 
         models[[m]]$pct, " %\n", sep = "") 
-    #if(kplot) image_ggplot(models[[m]]$vt, 1:mk, paste("Digit", m))
+    if(kplot) image_ggplot(models[[m]]$vt, 1:mk, paste("Digit", m))
   }
 }
 
+library(parallel)
+library(ggplot2)
+library(pbdMPI)
+library(pbdIO)
+source("../mnist/mnist_read.R")
+source("../code/flexiblas_setup.r")
+blas_threads = as.numeric(commandArgs(TRUE)[2])
+fork_cores = as.numeric(commandArgs(TRUE)[3])
+setback("OPENBLAS")
+setthreads(blas_threads)
+
 ## Begin CV (This CV is with mclapply. Exercise 8 needs MPI parallelization.)
 ## set up cv parameters
-init()
-
 nfolds = 10
-
-n_test <- nrow(test)
-gt <- gather(nfolds)
-pars = seq(85.0, 95, .2)      ## par values to fit
+pars = seq(80.0, 95, .2)      ## par values to fit
 folds = sample( rep_len(1:nfolds, nrow(train)), nrow(train) ) ## random folds
 cv = expand.grid(par = pars, fold = 1:nfolds)  ## all combinations
 
@@ -125,7 +114,7 @@ fold_err = function(i, cv, folds, train) {
 
 ## apply fold_err() over parameter combinations
 cv_err = mclapply(1:nrow(cv), fold_err, cv = cv, folds = folds, train = train,
-                  mc.cores = cores_on_my_node)
+                  mc.cores = fork_cores)
 
 ## sum fold errors for each parameter value
 cv_err_par = tapply(unlist(cv_err), cv[, "par"], sum)
@@ -144,10 +133,5 @@ pdf("BasisImages.pdf")
 model_report(models, kplot = 9)
 dev.off()
 predicts = predict_svdmod(test, models)
-correct <- reduce(sum(predicts == test_lab))
-comm.cat("Proportion Correct:", correct/n_test, "\n")
-finalize()
-
-
-
-
+correct <- sum(predicts == test_lab)
+cat("Proportion Correct:", correct/nrow(test), "\n")
