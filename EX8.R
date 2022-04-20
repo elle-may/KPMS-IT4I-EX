@@ -98,6 +98,7 @@ setthreads(blas_threads)
 
 ## Begin CV (This CV is with mclapply. Exercise 8 needs MPI parallelization.)
 ## set up cv parameters
+init()
 nfolds = 10
 pars = seq(80.0, 95, .2)      ## par values to fit
 folds = sample( rep_len(1:nfolds, nrow(train)), nrow(train) ) ## random folds
@@ -135,3 +136,4 @@ dev.off()
 predicts = predict_svdmod(test, models)
 correct <- sum(predicts == test_lab)
 cat("Proportion Correct:", correct/nrow(test), "\n")
+finalize()
