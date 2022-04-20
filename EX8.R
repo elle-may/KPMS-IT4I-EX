@@ -106,7 +106,7 @@ pars = seq(80.0, 95, .2)## par values to fit
 my_test_rows = comm.chunk(nrow(test), form = "vector")
 my_train_rows = comm.chunk(nrow(train), form = "vector")
 
-folds = sample( rep_len(1:nfolds, nrow(my_train_rows)), nrow(my_train_rows ), size = my_rank + 1 ) ## random folds
+folds = sample(1:nfolds, nrow(my_train_rows), nrow(my_train_rows ), size = my_rank + 1 ) ## random folds
 cv = expand.grid(par = pars, fold = 1:nfolds)  ## all combinations
 
 ## function for parameter combination i
