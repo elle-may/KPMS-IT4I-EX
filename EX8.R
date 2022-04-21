@@ -104,7 +104,7 @@ my_rank = comm.rank()
 nfolds = comm.chunk(10)
 pars = seq(80.0, 95, .2)## par values to fit
 my_test_rows = comm.chunk(nrow(test), form = "vector")
-my_train_rows = comm.chunk(nrow(train), form = "vector")
+my_train_rows = nrow(train)
 
 folds = sample( rep_len(1:nfolds, nrow(train)), nrow(train) ) ## random folds
 cv = expand.grid(par = pars, fold = 1:nfolds)  ## all combinations
@@ -121,7 +121,7 @@ fold_err = function(i, cv, folds, train) {
 }
 
 ## apply fold_err() over parameter combinations
-my_cv_err = lapply(1:now(cv), fold_err, cv = my_index, folds = nfolds, train = my_train_rows)
+my_cv_err = lapply(1:nrow(cv), fold_err, cv = my_index, folds = nfolds, train = my_train_rows)
 
 ## sum fold errors for each parameter value
 cv_err = allgather(my_cv_err)`  
