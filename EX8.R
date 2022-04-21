@@ -114,10 +114,11 @@ comm.print(cv)
 comm.print(my_index)
 comm.print(pars)
 comm.print(nrow(cv))
-comm.print(nrow(my_index))
-comm.print(nrow(pars))
-comm.print(nrow(my_train_rows))
 comm.print(my_train_rows)
+comm.print(dim(cv))
+comm.print(dim(my_index))
+comm.print(dim(pars))
+comm.print(dim(my_train_rows))
 ## function for parameter combination i
 fold_err = function(i, cv, folds, train) {
   par = cv[i, "par"]
@@ -128,7 +129,7 @@ fold_err = function(i, cv, folds, train) {
 }
 
 ## apply fold_err() over parameter combinations
-my_cv_err = lapply(1:pars, fold_err, cv = my_index, folds = nfolds, train = my_train_rows)
+my_cv_err = lapply(1:nrow(cv), fold_err, cv = my_index, folds = nfolds, train = my_train_rows)
 
 ## sum fold errors for each parameter value
 cv_err = allgather(my_cv_err)`  
