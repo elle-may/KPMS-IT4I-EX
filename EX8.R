@@ -110,7 +110,9 @@ folds = sample( rep_len(1:nfolds, nrow(train)), nrow(train) ) ## random folds
 cv = expand.grid(par = pars, fold = 1:nfolds)  ## all combinations
 
 my_index = comm.chunk(nrow(cv), form = "vector")
-
+comm.print(cv)
+comm.print(my_index)
+comm.print(pars)
 ## function for parameter combination i
 fold_err = function(i, cv, folds, train) {
   par = cv[i, "par"]
