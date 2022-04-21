@@ -113,6 +113,9 @@ my_index = comm.chunk(nrow(cv), form = "vector")
 comm.print(cv)
 comm.print(my_index)
 comm.print(pars)
+comm.print(nrow(cv))
+comm.print(nrow(my_index))
+comm.print(nrow(pars))
 ## function for parameter combination i
 fold_err = function(i, cv, folds, train) {
   par = cv[i, "par"]
