@@ -101,7 +101,7 @@ setthreads(blas_threads)
 ## set up cv parameters
 
 my_rank = comm.rank()
-nfolds = 10
+nfolds = comm.chunk(10)
 pars = seq(80.0, 95, .2)## par values to fit
 my_test_rows = comm.chunk(nrow(test), form = "vector")
 my_train_rows = comm.chunk(nrow(train), form = "vector")
@@ -121,7 +121,7 @@ fold_err = function(i, cv, folds, train) {
 }
 
 ## apply fold_err() over parameter combinations
-my_cv_err = mclapply(1:my_index, fold_err, cv = my_index, folds = nfolds, train = my_train_rows, mc.cores = fork_cores)
+my_cv_err = mclapply(1:my_index, fold_err, cv = cv, folds = nfolds, train = my_train_rows, mc.cores = fork_cores)
 
 ## sum fold errors for each parameter value
 cv_err = allgather(my_cv_err)`  
