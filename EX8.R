@@ -101,7 +101,7 @@ setthreads(blas_threads)
 ## set up cv parameters
 
 my_rank = comm.rank()
-nfolds = comm.chunk(10, form = "vector")
+nfolds = comm.chunk(10)
 pars = seq(80.0, 95, .2)## par values to fit
 my_test_rows = comm.chunk(nrow(test), form = "vector")
 my_train_rows = comm.chunk(nrow(train), form = "vector")
