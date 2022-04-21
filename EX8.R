@@ -109,6 +109,8 @@ my_train_rows = comm.chunk(nrow(train), form = "vector")
 folds = sample( rep_len(1:nfolds, nrow(train)), nrow(train) ) ## random folds
 cv = expand.grid(par = pars, fold = 1:nfolds)  ## all combinations
 
+my_index = comm.chunk(nrow(cv), form = "vector")
+
 ## function for parameter combination i
 fold_err = function(i, cv, folds, train) {
   par = cv[i, "par"]
@@ -119,10 +121,11 @@ fold_err = function(i, cv, folds, train) {
 }
 
 ## apply fold_err() over parameter combinations
-cv_err = mclapply(1:nrow(cv), fold_err, cv = cv, folds = folds, train = my_train_rows,
+my_cv_err = mclapply(1:nrow(cv), fold_err, cv = my_index, folds = folds, train = my_train_rows,
                   mc.cores = fork_cores)
 
 ## sum fold errors for each parameter value
+cv_err = allgather(my_cv_err)`  
 cv_err_par = tapply(unlist(cv_err), cv[, "par"], sum)
 
 
